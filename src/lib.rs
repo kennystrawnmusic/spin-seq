@@ -91,7 +91,7 @@ impl<T> SeqLock<T> {
     }
 }
 
-impl<T: Copy> SeqLock<T> {
+impl<T> SeqLock<T> {
     /// Creates a new SeqLock with the given initial value.
     #[inline]
     pub const fn new(val: T) -> SeqLock<T> {
