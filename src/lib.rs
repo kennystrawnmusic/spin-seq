@@ -1,3 +1,4 @@
+#![no_std]
 //! This library provides the `SeqLock` type, which is a form of reader-writer
 //! lock that is heavily optimized for readers.
 //!
@@ -54,14 +55,13 @@
 
 #![warn(missing_docs, rust_2018_idioms)]
 
-use parking_lot::{Mutex, MutexGuard};
-use std::cell::UnsafeCell;
-use std::fmt;
-use std::mem::MaybeUninit;
-use std::ops::{Deref, DerefMut};
-use std::ptr;
-use std::sync::atomic::{fence, AtomicUsize, Ordering};
-use std::thread;
+use spin::{Mutex, MutexGuard};
+use core::cell::UnsafeCell;
+use core::fmt;
+use core::mem::MaybeUninit;
+use core::ops::{Deref, DerefMut};
+use core::ptr;
+use core::sync::atomic::{fence, AtomicUsize, Ordering};
 
 /// A sequential lock
 pub struct SeqLock<T> {
@@ -126,7 +126,7 @@ impl<T: Copy> SeqLock<T> {
                 // Yield to give the writer a chance to finish. Writing is
                 // expected to be relatively rare anyways so this isn't too
                 // performance critical.
-                thread::yield_now();
+                core::hint::spin_loop();
                 continue;
             }
 
